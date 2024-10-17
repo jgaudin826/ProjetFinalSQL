@@ -64,7 +64,7 @@ func GetLeaveByUuid(uuid string, w http.ResponseWriter, r *http.Request) Leave {
 }
 
 /*
-!UpdateLeaveInfo function is used to update leave inforamation by using UPDATE sql command. She take as argument a Leave type, a writer, a request.
+!UpdateLeaveInfo function is used to update leave information by using UPDATE sql command. She take as argument a Leave type, a writer, a request.
 */
 func UpdateLeaveInfo(leave Leave, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
