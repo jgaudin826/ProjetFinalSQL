@@ -28,7 +28,7 @@ func AddEmployee(employee Employee, w http.ResponseWriter, r *http.Request) {
 	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err2 := db.Prepare("INSERT INTO employee (uuid, Last_name, First_name, Email, Phone_number, Department_id, Position_id, Superior_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+	query, err2 := db.Prepare("INSERT INTO employee (uuid, last_name, first_name, email, phone_number, department_id, position_id, superior_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
 	query.Exec(employee.Uuid, employee.Last_name, employee.First_name, employee.Email, employee.Phone_number, employee.Department_id, employee.Position_id, employee.Superior_id)
 	CheckErr(err2, w, r)
 	defer query.Close()
@@ -64,7 +64,7 @@ func UpdateEmployeeInfo(employee Employee, w http.ResponseWriter, r *http.Reques
 	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err := db.Prepare("UPDATE employee SET Last_name = ?, First_name = ?, Email = ?, Phone_number = ?, Department_id = ?, Position_id = ?, Superior_id = ? WHERE Uuid = ?")
+	query, err := db.Prepare("UPDATE employee SET last_name = ?, first_name = ?, email = ?, phone_number = ?, department_id = ?, position_id = ?, superior_id = ? WHERE uuid = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -88,7 +88,7 @@ func DeleteEmployee(employeeUuid string, w http.ResponseWriter, r *http.Request)
 	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err := db.Prepare("DELETE FROM employee WHERE Uuid = ?")
+	query, err := db.Prepare("DELETE FROM employee WHERE uuid = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
