@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Connect to database
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on") // file:./threadcore.db?_foreign_keys=on
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on") // file:./threadcore.db?_foreign_keys=on
 	fmt.Println("open/create DB:")
 	checkErr(err)
 	// defer close
@@ -18,35 +18,30 @@ func main() {
 
 	dropTables := `
 PRAGMA foreign_keys = OFF;
-DROP TABLE IF EXISTS post;
-DROP TABLE IF EXISTS comment;
-DROP TABLE IF EXISTS like;
-DROP TABLE IF EXISTS community;
-DROP TABLE IF EXISTS user_community;
-DROP TABLE IF EXISTS friend;
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS employee;
+DROP TABLE IF EXISTS department;
+DROP TABLE IF EXISTS team;
+DROP TABLE IF EXISTS position;
+DROP TABLE IF EXISTS leave;
 	`
-
-	// not used for now
-	//DROP TABLE IF EXISTS message;
-	//DROP TABLE IF EXISTS groupchat;
-	//DROP TABLE IF EXISTS user_groupchat;
-	//DROP TABLE IF EXISTS friend_request;
-
 	_, err = db.Exec(dropTables)
 	fmt.Println("drop tables:")
 	checkErr(err)
 	dropTables += ""
 
 	createTables := `
-CREATE TABLE user(
-	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	uuid VARCHAR(255),  
-	profile VARCHAR(255), 
-	banner VARCHAR(255), 
+CREATE TABLE employee(
+	uuid VARCHAR(255) NOT NULL PRIMARY KEY,  
+	last_name VARCHAR(255), 
+	first_name VARCHAR(255), 
 	email VARCHAR(64), 
-	username VARCHAR(20), 
-	password VARCHAR(255));
+	phone_number VARCHAR(14), 
+	departement_id INTEGER,
+	position_id INTEGER,
+	superior_id INTEGER,
+	FOREIGN KEY (department_id) REFERENCES user(id),
+	FOREIGN KEY
+	);
 
 CREATE TABLE community(
 	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
