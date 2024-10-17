@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Connect to database
-	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on") // file:./threadcore.db?_foreign_keys=on
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	fmt.Println("open/create DB:")
 	checkErr(err)
 	// defer close
@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS department;
 DROP TABLE IF EXISTS team;
 DROP TABLE IF EXISTS position;
 DROP TABLE IF EXISTS leave;
+DROP TABLE IF EXISTS employee_team;
 	`
 	_, err = db.Exec(dropTables)
 	fmt.Println("drop tables:")
@@ -36,76 +37,45 @@ CREATE TABLE employee(
 	first_name VARCHAR(255), 
 	email VARCHAR(64), 
 	phone_number VARCHAR(14), 
-	departement_id INTEGER,
-	position_id INTEGER,
-	superior_id INTEGER,
-	FOREIGN KEY (department_id) REFERENCES user(id),
-	FOREIGN KEY
+	department_uuid INTEGER,
+	position_uuid INTEGER,
+	superior_uuid INTEGER,
+	FOREIGN KEY (department_uuid) REFERENCES department(uuid)ON DELETE CASCADE,
+	FOREIGN KEY (position_uuid) REFERENCES position(uuid)ON DELETE CASCADE,
+	FOREIGN KEY (superior_uuid) REFERENCES employee(uuid)ON DELETE CASCADE);
+
+CREATE TABLE department( 
+	uuid VARCHAR(255) NOT NULL PRIMARY KEY, 
+	name VARCHAR(255),
+	department_leader_uuid INTEGER, 
+	FOREIGN KEY (department_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE
 	);
 
-CREATE TABLE community(
-	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	profile VARCHAR(255), 
-	banner VARCHAR(255), 
-	name VARCHAR(32), 
-	description VARCHAR(255), 
-	user_id INTEGER, 
-	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
+CREATE TABLE team(
+	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
+	team_leader_uuid INTEGER, 
+	FOREIGN KEY (team_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE);
 
-CREATE TABLE friend(
-	user_id INTEGER,
-	friend_id INTEGER, 
-	PRIMARY KEY(user_id, friend_id), 
-	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
-	FOREIGN KEY (friend_id) REFERENCES user(id) ON DELETE CASCADE);
-
-CREATE TABLE post(
-	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	uuid VARCHAR(255),
+CREATE TABLE position(
+	uuid VARCHAR(255) NOT NULL PRIMARY KEY, 
 	title VARCHAR(32), 
-	content VARCHAR(500), 
-	media VARCHAR(255), 
-	media_type VARCHAR(255),
-	user_id INTEGER, 
-	community_id INTEGER, 
-	created TIMESTAMP, 
-	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
-	FOREIGN KEY (community_id) REFERENCES community(id) ON DELETE CASCADE);
+	salary INTEGER);
 
-CREATE TABLE comment(
-	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	user_id INTEGER, 
-	post_id INTEGER, 
-	comment_id INTEGER, 
-	content VARCHAR(255), 
-	created TIMESTAMP, 
-	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
-	FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE, 
-	FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE);
+CREATE TABLE leave(
+	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
+	employee_uuid INTEGER, 
+	start_date DATETIME,
+	end_date DATETIME,
+	leave_type VARCHAR(255), 
+	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid) ON DELETE CASCADE);
 
-CREATE TABLE like(
-	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
-	rating INTEGER, 
-	comment_id INTEGER, 
-	post_id INTEGER, 
-	user_id INTEGER, 
-	FOREIGN KEY (comment_id) REFERENCES comment(id) ON DELETE CASCADE, 
-	FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE, 
-	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE);
-
-CREATE TABLE user_community(
-	user_id INTEGER, 
-	community_id INTEGER, 
-	PRIMARY KEY(user_id, community_id), 
-	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, 
-	FOREIGN KEY (community_id) REFERENCES community(id) ON DELETE CASCADE);
+CREATE TABLE employee_team(
+	employee_uuid INTEGER, 
+	team_uuid INTEGER, 
+	PRIMARY KEY(employee_uuid, team_uuid), 
+	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid) ON DELETE CASCADE, 
+	FOREIGN KEY (team_uuid) REFERENCES team(uuid) ON DELETE CASCADE);
 	`
-
-	// not used for now :
-	//CREATE TABLE message(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, user_id INTEGER, groupchat_id INTEGER, friend_id INTEGER, message VARCHAR(255), sent TIMESTAMP, FOREIGN KEY (user_id) REFERENCES friend(user_id) ON DELETE CASCADE, FOREIGN KEY (groupchat_id) REFERENCES groupchat(id) ON DELETE CASCADE, FOREIGN KEY (friend_id) REFERENCES friend(friend_id) ON DELETE CASCADE);
-	//CREATE TABLE user_groupchat(user_id INTEGER, groupchat_id INTEGER, PRIMARY KEY(user_id, groupchat_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, FOREIGN KEY (groupchat_id) REFERENCES groupchat(id) ON DELETE CASCADE);
-	//CREATE TABLE friend_request(user_id INTEGER, request_id INTEGER, PRIMARY KEY(user_id, request_id), FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE, FOREIGN KEY (request_id) REFERENCES user(id) ON DELETE CASCADE);
-	//CREATE TABLE groupchat(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name VARCHAR(32));
 
 	_, err = db.Exec(createTables)
 	fmt.Println("create tables:")
