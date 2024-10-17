@@ -36,6 +36,8 @@ func main() {
 	// http.HandleFunc("/createLeave", functions.CreateLeave)
 	// http.HandleFunc("/updateLeave", functions.UpdateLeave)
 	// http.HandleFunc("/deleteLeave", functions.DeleteLeave)
+	// http.HandleFunc("/createEmployeeTeam", functions.CreateEmployeeTeam)
+	// http.HandleFunc("/deleteEmployeeTeam", functions.DeleteEmployeeTeam)
 
 	fmt.Println("Server Start at:")
 	fmt.Println("http://localhost" + port)

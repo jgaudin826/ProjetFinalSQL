@@ -101,3 +101,49 @@ func DeleteTeam(teamUuid string, w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Error : More than 1 team was deleted")
 	}
 }
+
+type EmployeeTeam struct {
+	EmployeeUuid string
+	TeamUuid     string
+}
+
+/*
+!AddEmployeeTeam function open data base and add team to it with the INSERT INTO sql command she take as argument a team type and a writer and request.
+*/
+func AddEmployeeTeam(employee_team EmployeeTeam, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err2 := db.Prepare("INSERT INTO employee_team (employee_uuid, team_uuid) VALUES (?, ?)")
+	query.Exec(employee_team.EmployeeUuid, employee_team.TeamUuid)
+	CheckErr(err2, w, r)
+	defer query.Close()
+}
+
+/*
+!DeleteEmployeeTeam function is used to delete a team by using DELETE sql command. She take as argument an int, a writer, a request.
+*/
+func DeleteEmployeeTeam(employeeUuid string, teamUuid string, w http.ResponseWriter, r *http.Request) {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	query, err := db.Prepare("DELETE FROM employee_team WHERE employee_uuid = ? AND team_uuid = ?")
+	CheckErr(err, w, r)
+	defer query.Close()
+
+	res, err := query.Exec(employeeUuid, teamUuid)
+	CheckErr(err, w, r)
+
+	affected, err := res.RowsAffected()
+	CheckErr(err, w, r)
+
+	if affected > 1 {
+		log.Fatal("Error : More than 1 team was deleted")
+	}
+}
