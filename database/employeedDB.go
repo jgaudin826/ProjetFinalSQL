@@ -8,105 +8,97 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type User struct {
-	Id       int
-	Uuid     string
-	Profile  string
-	Banner   string
-	Email    string
-	Username string
-	Password string
+type Employee struct {
+	Uuid         string
+	Last_name    string
+	First_name   string
+	Email        string
+	Phone_number string
+	Department_id string
+	Position_id  string
+	Superior_id  string
 }
 
-/*
-!AddUser function open data base and add an user to it with the INSERT INTO sql command she take as argument an User type and a writer and request.
-*/
-func AddUser(user User, w http.ResponseWriter, r *http.Request) {
-	//Open the database connection
+// AddEmployee opens the database connection and adds an employee to it using the INSERT INTO SQL command.
+// It takes an Employee struct, http.ResponseWriter, and *http.Request as arguments.
+func AddEmployee(employee Employee, w http.ResponseWriter, r *http.Request) {
+	// Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
-	// Close the batabase at the end of the program
+	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err2 := db.Prepare("INSERT INTO user (uuid, profile, banner, email, username, password) VALUES (?, ?, ?, ?, ?, ?)")
-	query.Exec(user.Uuid, user.Profile, user.Banner, user.Email, user.Username, user.Password)
+	query, err2 := db.Prepare("INSERT INTO employee (uuid, Last_name, First_name, Email, Phone_number, Department_id, Position_id, Superior_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+	query.Exec(employee.Uuid, employee.Last_name, employee.First_name, employee.Email, employee.Phone_number, employee.Department_id, employee.Position_id, employee.Superior_id)
 	CheckErr(err2, w, r)
 	defer query.Close()
-
-	query2, err3 := db.Prepare("INSERT INTO friend (user_id, friend_id) VALUES (?, ?)")
-	query2.Exec(user.Id, user.Id)
-	CheckErr(err3, w, r)
-	defer query2.Close()
 }
 
-/*
-!GetUserByUuid function is used to get a user by is uuid by using the SELECT * FROM sql command. She take as argument a string, a writer, a request and return an User type.
-*/
-func GetUserByUuid(uuid string, w http.ResponseWriter, r *http.Request) User {
-	//Open the database connection
+// GetEmployeeByUuid retrieves an employee by their UUID using the SELECT * FROM SQL command.
+// It takes a UUID string, http.ResponseWriter, and *http.Request as arguments, and returns an Employee struct.
+func GetEmployeeByUuid(uuid string, w http.ResponseWriter, r *http.Request) Employee {
+	// Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
-	// Close the batabase at the end of the program
+	// Close the database at the end of the function
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT * FROM user WHERE uuid = '" + uuid + "'")
+	rows, _ := db.Query("SELECT * FROM employee WHERE uuid = '" + uuid + "'")
 	defer rows.Close()
 
-	user := User{}
+	employee := Employee{}
 
 	for rows.Next() {
-		rows.Scan(&user.Id, &user.Uuid, &user.Profile, &user.Banner, &user.Email, &user.Username, &user.Password)
+		rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_id, &employee.Position_id, &employee.Superior_id)
 	}
 
-	return user
+	return employee
 }
 
-/*
-!UpdateUserInfo function is used to update user inforamation by using UPDATE sql command. She take as argument a user type, a writer, a request.
-*/
-func UpdateUserInfo(user User, w http.ResponseWriter, r *http.Request) {
-	//Open the database connection
+// UpdateEmployeeInfo updates an employee's information using the UPDATE SQL command.
+// It takes an Employee struct, http.ResponseWriter, and *http.Request as arguments.
+func UpdateEmployeeInfo(employee Employee, w http.ResponseWriter, r *http.Request) {
+	// Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
-	// Close the batabase at the end of the program
+	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err := db.Prepare("UPDATE user SET uuid = ?, profile = ?, banner = ?, username = ?, email = ?, password = ? WHERE id = ?")
+	query, err := db.Prepare("UPDATE employee SET Last_name = ?, First_name = ?, Email = ?, Phone_number = ?, Department_id = ?, Position_id = ?, Superior_id = ? WHERE Uuid = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
-	res, err := query.Exec(user.Uuid, user.Profile, user.Banner, user.Username, user.Email, user.Password, user.Id)
+	res, err := query.Exec(employee.Last_name, employee.First_name, employee.Email, employee.Phone_number, employee.Department_id, employee.Position_id, employee.Superior_id, employee.Uuid)
 	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
 	CheckErr(err, w, r)
 
 	if affected > 1 {
-		log.Fatal("Error : More than 1 user was affected")
+		log.Fatal("Error: More than 1 employee was affected")
 	}
 }
 
-/*
-!DeleteUser function is used to delete user by using DELETE sql command. She take as argument an int, a writer, a request.
-*/
-func DeleteUser(userId int, w http.ResponseWriter, r *http.Request) {
-	//Open the database connection
+// DeleteEmployee deletes an employee from the database using the DELETE SQL command.
+// It takes an employee UUID string, http.ResponseWriter, and *http.Request as arguments.
+func DeleteEmployee(employeeUuid string, w http.ResponseWriter, r *http.Request) {
+	// Open the database connection
 	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
 	CheckErr(err, w, r)
-	// Close the batabase at the end of the program
+	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err := db.Prepare("DELETE FROM user WHERE id = ?")
+	query, err := db.Prepare("DELETE FROM employee WHERE Uuid = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
-	res, err := query.Exec(userId)
+	res, err := query.Exec(employeeUuid)
 	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
 	CheckErr(err, w, r)
 
 	if affected > 1 {
-		log.Fatal("Error : More than 1 user was deleted")
+		log.Fatal("Error: More than 1 employee was deleted")
 	}
 }
