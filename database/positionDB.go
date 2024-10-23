@@ -53,6 +53,28 @@ func GetPositionByUuid(uuid string, w http.ResponseWriter, r *http.Request) Posi
 }
 
 /*
+!GetPositionByName function is used to get a position by is uuid by using the SELECT * FROM sql command. She take as argument a string, a writer, a request and return a position type.
+*/
+func GetPositionByName(positionName string, w http.ResponseWriter, r *http.Request) Position {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, _ := db.Query("SELECT * FROM position WHERE name = '" + positionName + "'")
+	defer rows.Close()
+
+	position := Position{}
+
+	for rows.Next() {
+		rows.Scan(&position.Uuid, &position.Name, &position.Salary)
+	}
+
+	return position
+}
+
+/*
 !UpdatePositionInfo function is used to update position information by using UPDATE sql command. She take as argument a position type, a writer, a request.
 */
 func UpdatePositionInfo(position Position, w http.ResponseWriter, r *http.Request) {
