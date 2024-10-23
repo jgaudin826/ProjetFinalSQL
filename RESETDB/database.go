@@ -53,7 +53,8 @@ CREATE TABLE department(
 
 CREATE TABLE team(
 	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
-	team_leader_uuid INTEGER, 
+	team_leader_uuid INTEGER,
+	name VARCHAR(32) UNIQUE,
 	FOREIGN KEY (team_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE);
 
 CREATE TABLE position(

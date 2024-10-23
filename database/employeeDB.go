@@ -55,6 +55,27 @@ func GetEmployeeByUuid(uuid string, w http.ResponseWriter, r *http.Request) Empl
 	return employee
 }
 
+// GetEmployeeByName retrieves an employee by their first and last name using the SELECT * FROM SQL command.
+// It takes a firstname and lastname string, http.ResponseWriter, and *http.Request as arguments, and returns an Employee struct.
+func GetEmployeeByName(firstName string, lastName string, w http.ResponseWriter, r *http.Request) Employee {
+	// Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the database at the end of the function
+	defer db.Close()
+
+	rows, _ := db.Query("SELECT * FROM employee WHERE last_name = '" + lastName + "' AND first_name = '" + firstName + "'")
+	defer rows.Close()
+
+	employee := Employee{}
+
+	for rows.Next() {
+		rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_id, &employee.Position_id, &employee.Superior_id)
+	}
+
+	return employee
+}
+
 // UpdateEmployeeInfo updates an employee's information using the UPDATE SQL command.
 // It takes an Employee struct, http.ResponseWriter, and *http.Request as arguments.
 func UpdateEmployeeInfo(employee Employee, w http.ResponseWriter, r *http.Request) {
