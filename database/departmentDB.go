@@ -9,9 +9,9 @@ import (
 )
 
 type Department struct {
-	Uuid                 string
-	Name                 string
-	Department_leader_id string
+	Uuid                   string
+	Department_leader_uuid string
+	Name                   string
 }
 
 // AddDepartment opens the database connection and adds a department to it using the INSERT INTO SQL command.
@@ -23,8 +23,8 @@ func AddDepartment(department Department, w http.ResponseWriter, r *http.Request
 	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err2 := db.Prepare("INSERT INTO department (uuid, name, department_leader_id) VALUES (?, ?, ?)")
-	query.Exec(department.Uuid, department.Name, department.Department_leader_id)
+	query, err2 := db.Prepare("INSERT INTO department (uuid, department_leader_uuid, name) VALUES (?, ?, ?)")
+	query.Exec(department.Uuid, department.Department_leader_uuid, department.Name)
 	CheckErr(err2, w, r)
 	defer query.Close()
 }
@@ -44,7 +44,29 @@ func GetDepartmentByUuid(uuid string, w http.ResponseWriter, r *http.Request) De
 	department := Department{}
 
 	for rows.Next() {
-		rows.Scan(&department.Uuid, &department.Name, &department.Department_leader_id)
+		rows.Scan(&department.Uuid, &department.Department_leader_uuid, &department.Name)
+	}
+
+	return department
+}
+
+/*
+!GetdepartmentByName function is used to get a department by is uuid by using the SELECT * FROM sql command. She take as argument a string, a writer, a request and return a department type.
+*/
+func GetDepartmentByName(departmentName string, w http.ResponseWriter, r *http.Request) Department {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, _ := db.Query("SELECT * FROM department WHERE name = '" + departmentName + "'")
+	defer rows.Close()
+
+	department := Department{}
+
+	for rows.Next() {
+		rows.Scan(&department.Uuid, &department.Department_leader_uuid, &department.Name)
 	}
 
 	return department
@@ -59,11 +81,11 @@ func UpdateDepartmentInfo(department Department, w http.ResponseWriter, r *http.
 	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err := db.Prepare("UPDATE department SET name = ?, department_leader_id = ? WHERE uuid = ?")
+	query, err := db.Prepare("UPDATE department SET department_leader_uuid = ?, name = ? WHERE uuid = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
-	res, err := query.Exec(department.Name, department.Department_leader_id, department.Uuid)
+	res, err := query.Exec(department.Department_leader_uuid, department.Name, department.Uuid)
 	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
