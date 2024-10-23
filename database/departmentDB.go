@@ -14,11 +14,18 @@ type Department struct {
 	Name                   string
 }
 
+type DepartmentInfo struct {
+	Uuid                   string
+	Department_leader_uuid string
+	Department_leader_name string
+	Name                   string
+}
+
 // AddDepartment opens the database connection and adds a department to it using the INSERT INTO SQL command.
 // It takes a Department struct, http.ResponseWriter, and *http.Request as arguments.
 func AddDepartment(department Department, w http.ResponseWriter, r *http.Request) {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
@@ -33,7 +40,7 @@ func AddDepartment(department Department, w http.ResponseWriter, r *http.Request
 // It takes a UUID string, http.ResponseWriter, and *http.Request as arguments, and returns a Department struct.
 func GetDepartmentByUuid(uuid string, w http.ResponseWriter, r *http.Request) Department {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
@@ -55,7 +62,7 @@ func GetDepartmentByUuid(uuid string, w http.ResponseWriter, r *http.Request) De
 */
 func GetDepartmentByName(departmentName string, w http.ResponseWriter, r *http.Request) Department {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -76,7 +83,7 @@ func GetDepartmentByName(departmentName string, w http.ResponseWriter, r *http.R
 // It takes a Department struct, http.ResponseWriter, and *http.Request as arguments.
 func UpdateDepartmentInfo(department Department, w http.ResponseWriter, r *http.Request) {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
@@ -100,7 +107,7 @@ func UpdateDepartmentInfo(department Department, w http.ResponseWriter, r *http.
 // It takes a department UUID string, http.ResponseWriter, and *http.Request as arguments.
 func DeleteDepartment(departmentUuid string, w http.ResponseWriter, r *http.Request) {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()

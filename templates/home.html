@@ -7,5 +7,14 @@
 </head>
 <body>
     <h1>{{.Test}}</h1>
+    <section id="createTeamForm" class="form">
+        <form action="/createTeam" method="post">
+            <h1 class="title">Create a new Team</h1>
+            <input class="textInput" type="text" placeholder="Team name" name="teamName" required>
+            <input class="textInput" type="text" placeholder="Team leader first name" name="leaderFirstName" required>
+            <input class="textInput" type="text" placeholder="Team leader last name" name="leaderLastName" required>
+            <input class="button" type="submit" value="Create" >
+        </form>
+    </section>
 </body>
 </html>

@@ -57,7 +57,7 @@ func UpdateTeam(w http.ResponseWriter, r *http.Request) {
 
 	teamUuid := r.FormValue("teamUuid")
 	team := database.GetTeamByUuid(teamUuid, w, r)
-	if (team == database.Team{}) {
+	if (team == database.TeamInfo{}) {
 		fmt.Println("team does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/?type=error&message=Team+not+found+!", http.StatusSeeOther)
 		return
@@ -98,7 +98,7 @@ func DeleteTeam(w http.ResponseWriter, r *http.Request) {
 
 	teamUuid := r.FormValue("teamUuid")
 	team := database.GetTeamByUuid(teamUuid, w, r)
-	if (team == database.Team{}) {
+	if (team == database.TeamInfo{}) {
 		fmt.Println("team does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/?type=error&message=Team+not+found+!", http.StatusSeeOther)
 		return
@@ -130,7 +130,7 @@ func CreateEmployeeTeam(w http.ResponseWriter, r *http.Request) {
 
 	teamUuid := r.FormValue("teamUuid")
 	team := database.GetTeamByUuid(teamUuid, w, r)
-	if (team == database.Team{}) {
+	if (team == database.TeamInfo{}) {
 		fmt.Println("team does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/search/?type=error&message=Team+not+found+!", http.StatusSeeOther)
 		return
@@ -167,7 +167,7 @@ func DeleteEmployeeTeam(w http.ResponseWriter, r *http.Request) {
 
 	teamUuid := r.FormValue("teamUuid")
 	team := database.GetTeamByUuid(teamUuid, w, r)
-	if (team == database.Team{}) {
+	if (team == database.TeamInfo{}) {
 		fmt.Println("team does not exist") // TO-DO : send error comment not found
 		http.Redirect(w, r, "/search/?type=error&message=Team+not+found+!", http.StatusSeeOther)
 		return
@@ -175,7 +175,7 @@ func DeleteEmployeeTeam(w http.ResponseWriter, r *http.Request) {
 
 	employeeUuid := r.FormValue("employeeUuid")
 	employee := database.GetEmployeeByUuid(employeeUuid, w, r)
-	if (employee == database.Employee{}) {
+	if (employee == database.EmployeeInfo{}) {
 		fmt.Println("Employee does not exist") // TO-DO : Send error message for invalid name
 		http.Redirect(w, r, "/?type=error&message=Employee+not+found!", http.StatusSeeOther)
 		return

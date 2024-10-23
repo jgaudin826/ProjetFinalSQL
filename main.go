@@ -17,9 +17,9 @@ func main() {
 	//! All pages redirection path
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/team/", Team)
-	http.HandleFunc("/employee/", Employee)
-	http.HandleFunc("/department/", Department)
-	http.HandleFunc("/404", NotFound)
+	// http.HandleFunc("/employee/", Employee)
+	// http.HandleFunc("/department/", Department)
+	// http.HandleFunc("/404", NotFound)
 
 	//!Forms routes
 	http.HandleFunc("/createEmployee", functions.CreateEmployee)

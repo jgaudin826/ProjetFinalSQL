@@ -14,12 +14,19 @@ type Team struct {
 	Name             string
 }
 
+type TeamInfo struct {
+	Uuid             string
+	Team_leader_uuid string
+	Team_leader_name string
+	Name             string
+}
+
 /*
 !AddTeam function open data base and add team to it with the INSERT INTO sql command she take as argument a team type and a writer and request.
 */
 func AddTeam(team Team, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -33,20 +40,20 @@ func AddTeam(team Team, w http.ResponseWriter, r *http.Request) {
 /*
 !GetTeamByUuid function is used to get a team by is uuid by using the SELECT * FROM sql command. She take as argument a string, a writer, a request and return a team type.
 */
-func GetTeamByUuid(uuid string, w http.ResponseWriter, r *http.Request) Team {
+func GetTeamByUuid(uuid string, w http.ResponseWriter, r *http.Request) TeamInfo {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT * FROM team WHERE uuid = '" + uuid + "'")
+	rows, _ := db.Query("SELECT team.uuid, team.team_leader_uuid, employee.first_name || ' ' || employee.last_name , team.name FROM team JOIN employee ON employee.uuid = team.team_leader_uuid WHERE team.uuid = '" + uuid + "'")
 	defer rows.Close()
 
-	team := Team{}
+	team := TeamInfo{}
 
 	for rows.Next() {
-		rows.Scan(&team.Uuid, &team.Team_leader_uuid, &team.Name)
+		rows.Scan(&team.Uuid, &team.Team_leader_uuid, &team.Team_leader_name, &team.Name)
 	}
 
 	return team
@@ -57,7 +64,7 @@ func GetTeamByUuid(uuid string, w http.ResponseWriter, r *http.Request) Team {
 */
 func GetTeamByName(teamName string, w http.ResponseWriter, r *http.Request) Team {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -79,7 +86,7 @@ func GetTeamByName(teamName string, w http.ResponseWriter, r *http.Request) Team
 */
 func UpdateTeamInfo(team Team, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -104,7 +111,7 @@ func UpdateTeamInfo(team Team, w http.ResponseWriter, r *http.Request) {
 */
 func DeleteTeam(teamUuid string, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -129,7 +136,7 @@ func DeleteTeam(teamUuid string, w http.ResponseWriter, r *http.Request) {
 */
 func AddEmployeeTeam(employeeUuid string, teamUuid string, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -145,7 +152,7 @@ func AddEmployeeTeam(employeeUuid string, teamUuid string, w http.ResponseWriter
 */
 func ExistsEmployeeTeam(employeeUuid string, teamUuid string, w http.ResponseWriter, r *http.Request) bool {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -167,11 +174,43 @@ func ExistsEmployeeTeam(employeeUuid string, teamUuid string, w http.ResponseWri
 }
 
 /*
+!GetEmployeesByTeam function open data base and get users on a community by using the SELECT * FROM sql command she take as argument an int type and a writer and request and return a slice of User.
+*/
+func GetEmployeesByTeam(teamUuid string, w http.ResponseWriter, r *http.Request) []EmployeeInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT team.uuid, team.team_leader_uuid, employee.first_name || ' ' || employee.last_name, team.name FROM team JOIN employee ON employee.uuid = team.team_leader_uuid JOIN employee_team ON employee.uuid = employee_team.employee_uuid WHERE employee_team.team_uuid='" + teamUuid + "'")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	employeeList := make([]EmployeeInfo, 0)
+
+	for rows.Next() {
+		employee := EmployeeInfo{}
+		err = rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_uuid, &employee.Department_name, &employee.Position_uuid, &employee.Position_name, &employee.Superior_uuid, &employee.Superior_name)
+		CheckErr(err, w, r)
+
+		employeeList = append(employeeList, employee)
+	}
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	return employeeList
+}
+
+/*
 !DeleteEmployeeTeam function is used to delete a team by using DELETE sql command. She take as argument an int, a writer, a request.
 */
 func DeleteEmployeeTeam(employeeUuid string, teamUuid string, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()

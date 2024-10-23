@@ -30,7 +30,7 @@ type Leave struct {
 */
 func AddLeave(leave Leave, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -46,7 +46,7 @@ func AddLeave(leave Leave, w http.ResponseWriter, r *http.Request) {
 */
 func GetLeaveByUuid(uuid string, w http.ResponseWriter, r *http.Request) Leave {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -68,7 +68,7 @@ func GetLeaveByUuid(uuid string, w http.ResponseWriter, r *http.Request) Leave {
 */
 func UpdateLeaveInfo(leave Leave, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -93,7 +93,7 @@ func UpdateLeaveInfo(leave Leave, w http.ResponseWriter, r *http.Request) {
 */
 func Deleteleave(leaveUuid string, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()

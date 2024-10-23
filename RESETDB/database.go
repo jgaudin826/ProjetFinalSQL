@@ -84,6 +84,16 @@ CREATE TABLE employee_team(
 
 	createTables += ""
 	fmt.Println("Successfuly created the database!")
+
+	inserts := `INSERT INTO employee (uuid, last_name, first_name, email, phone_number, department_uuid, position_uuid, superior_uuid) VALUES 
+	('1', 'Doe', 'John', 'email', '06', '1', '1', '1');`
+
+	_, err = db.Exec(inserts)
+	fmt.Println("insert values:")
+	checkErr(err)
+
+	inserts += ""
+	fmt.Println("Successfuly inserted values!")
 }
 
 func checkErr(err error) {

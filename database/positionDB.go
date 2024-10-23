@@ -19,7 +19,7 @@ type Position struct {
 */
 func AddPosition(position Position, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -35,7 +35,7 @@ func AddPosition(position Position, w http.ResponseWriter, r *http.Request) {
 */
 func GetPositionByUuid(uuid string, w http.ResponseWriter, r *http.Request) Position {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -57,7 +57,7 @@ func GetPositionByUuid(uuid string, w http.ResponseWriter, r *http.Request) Posi
 */
 func GetPositionByName(positionName string, w http.ResponseWriter, r *http.Request) Position {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -79,7 +79,7 @@ func GetPositionByName(positionName string, w http.ResponseWriter, r *http.Reque
 */
 func UpdatePositionInfo(position Position, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -104,7 +104,7 @@ func UpdatePositionInfo(position Position, w http.ResponseWriter, r *http.Reques
 */
 func DeletePosition(positionUuid string, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
