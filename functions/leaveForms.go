@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 // CreateLeave collects user input from the form and creates a new leave request
@@ -29,7 +27,7 @@ func CreateLeave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	leave := database.Leave{
-		Uuid:         uuid.New().String(),
+		Uuid:         GetNewUuid(),
 		EmployeeUuid: r.FormValue("employeeUuid"),
 		StartDate:    startDate,
 		EndDate:      endDate,
