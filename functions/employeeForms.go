@@ -4,100 +4,83 @@ import (
 	"ProjetFinalSQL/database"
 	"fmt"
 	"net/http"
-	"strconv"
-	"time"
+	"github.com/google/uuid"
 )
 
-/*
-! CreateComment collects the user input from the corresponding form
-! Check if user is connected and other potential errors
-! create a comment in a database.comment struct type
-! sends it to the database function to store it
-! redirects the user to the corresponding page
-*/
-func CreateComment(w http.ResponseWriter, r *http.Request) {
+// CreateEmployee collects user input from the form and creates a new employee
+func CreateEmployee(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
 		return
 	}
 
-	commentid := r.FormValue("commentId")
-	commentId, _ := strconv.Atoi(commentid)
-	postid := r.FormValue("postId")
-	postId, _ := strconv.Atoi(postid)
-	content := r.FormValue("content")
+	employee := database.Employee{
+		Uuid:          uuid.New().String(),
+		Last_name:     r.FormValue("lastName"),
+		First_name:    r.FormValue("firstName"),
+		Email:         r.FormValue("email"),
+		Phone_number:  r.FormValue("phoneNumber"),
+		Department_id: r.FormValue("departmentId"),
+		Position_id:   r.FormValue("positionId"),
+		Superior_id:   r.FormValue("superiorId"),
+	}
 
-	comment := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentId, Content: content, Created: time.Now()}
-	database.AddComment(comment, w, r)
+	database.AddEmployee(employee, w, r)
 
-	Id := r.FormValue("postUuid")
-	id, _ := strconv.Atoi(Id)
-	postUuid := database.GetPostById(id, w, r).Uuid
-	http.Redirect(w, r, "/post/"+postUuid+"?type=success&message=Comment+posted+!", http.StatusSeeOther)
+	http.Redirect(w, r, "/employees?type=success&message=Employee+created+successfully!", http.StatusSeeOther)
 }
 
-/*
-! UpdateComment collects the user input from the corresponding form
-! Check if user is connected and has the rigth to do that action
-! create a comment in a database.comment struct type
-! sends it to the database function to update it
-! redirects the user to the corresponding page
-*/
-func UpdateComment(w http.ResponseWriter, r *http.Request) {
+// UpdateEmployee collects user input and updates an existing employee
+func UpdateEmployee(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
 		return
 	}
 
-	commentId := r.FormValue("commentId")
-	commentid, _ := strconv.Atoi(commentId)
-	comment := database.GetCommentById(commentid, w, r)
-	if (comment == database.CommentInfo{}) {
-		fmt.Println("comment does not exist") // TO-DO : send error comment not found
-		http.Redirect(w, r, "/search/?type=error&message=Comment+not+found+!", http.StatusSeeOther)
+	employeeUuid := r.FormValue("employeeUuid")
+	employee := database.GetEmployeeByUuid(employeeUuid, w, r)
+	if (employee == database.Employee{}) {
+		fmt.Println("Employee does not exist")
+		http.Redirect(w, r, "/employees?type=error&message=Employee+not+found!", http.StatusSeeOther)
 		return
 	}
 
-	postid := r.FormValue("postId")
-	postId, _ := strconv.Atoi(postid)
-	content := r.FormValue("content")
+	employee.Last_name = r.FormValue("lastName")
+	employee.First_name = r.FormValue("firstName")
+	employee.Email = r.FormValue("email")
+	employee.Phone_number = r.FormValue("phoneNumber")
+	employee.Department_id = r.FormValue("departmentId")
+	employee.Position_id = r.FormValue("positionId")
+	employee.Superior_id = r.FormValue("superiorId")
 
-	commentUpdate := database.Comment{Id: 0, User_id: user.Id, Post_id: postId, Comment_id: commentid, Content: content, Created: time.Now()}
-	database.AddComment(commentUpdate, w, r)
+	database.UpdateEmployeeInfo(employee, w, r)
 
-	http.Redirect(w, r, "/comment/"+commentId+"?type=success&message=Comment+successfully+update+!", http.StatusSeeOther)
+	http.Redirect(w, r, "/employee/"+employeeUuid+"?type=success&message=Employee+updated+successfully!", http.StatusSeeOther)
 }
 
-/*
-! DeleteComment collects the user input from the corresponding form
-! Check if user is connected and has the rigth to do that action
-! sends it to the database function to delete it
-! redirects the user to the corresponding page
-*/
-func DeleteComment(w http.ResponseWriter, r *http.Request) {
+// DeleteEmployee deletes an existing employee
+func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
 		return
 	}
 
-	commentId := r.FormValue("commentId")
-	commentid, _ := strconv.Atoi(commentId)
-	comment := database.GetCommentById(commentid, w, r)
-	if (comment == database.CommentInfo{}) {
-		fmt.Println("comment does not exist") // TO-DO : send error comment not found
-		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=Comment+not+found+!", http.StatusSeeOther)
+	employeeUuid := r.FormValue("employeeUuid")
+	employee := database.GetEmployeeByUuid(employeeUuid, w, r)
+	if (employee == database.Employee{}) {
+		fmt.Println("Employee does not exist")
+		http.Redirect(w, r, "/employees?type=error&message=Employee+not+found!", http.StatusSeeOther)
 		return
 	}
 
 	confirm := r.FormValue("confirm")
 	if confirm != "true" {
-		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
-		http.Redirect(w, r, "/comment/"+commentId+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
+		fmt.Println("User did not confirm deletion")
+		http.Redirect(w, r, "/employee/"+employeeUuid+"?type=error&message=Confirm+deletion!", http.StatusSeeOther)
 		return
-	} else {
-		database.DeleteComment(comment.Id, w, r)
 	}
 
-	//Send confirmation message
-	http.Redirect(w, r, "/?type=success&message=Comment+deleted+!", http.StatusSeeOther)
+	database.DeleteEmployee(employeeUuid, w, r)
+
+	http.Redirect(w, r, "/employees?type=success&message=Employee+deleted+successfully!", http.StatusSeeOther)
 }
