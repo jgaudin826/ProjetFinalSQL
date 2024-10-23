@@ -4,7 +4,6 @@ import (
 	"ProjetFinalSQL/database"
 	"fmt"
 	"net/http"
-	"github.com/google/uuid"
 )
 
 // CreateEmployee collects user input from the form and creates a new employee
@@ -15,7 +14,7 @@ func CreateEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 
 	employee := database.Employee{
-		Uuid:          uuid.New().String(),
+		Uuid:          GetNewUuid(),
 		Last_name:     r.FormValue("lastName"),
 		First_name:    r.FormValue("firstName"),
 		Email:         r.FormValue("email"),
