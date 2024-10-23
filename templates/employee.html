@@ -1,0 +1,62 @@
+<!-- templates/employee.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Profile</title>
+    <link rel="stylesheet" href="/static/style/employee.css">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src="/static/scripts/employee.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Employee Profile</h1>
+    </header>
+    <main>
+        <section id="employee-info">
+            <h2>Profile Information</h2>
+            <form id="update-employee-form">
+                <input type="hidden" name="employeeUuid" value="{{.Employee.Uuid}}"> 
+                <label for="name">First Name:</label>
+                <input type="text" id="name" name="firstName" value="{{.Employee.First_name}}">
+
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" value="{{.Employee.Last_name}}">
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{.Employee.Email}}">
+                
+                <label for="phone">Phone Number:</label>
+                <input type="text" id="phone" name="phoneNumber" value="{{.Employee.Phone_number}}">
+                
+                <label for="department">Department ID:</label>
+                <input type="text" id="department" name="departmentId" value="{{.Employee.Department_id}}">
+                
+                <label for="position">Position ID:</label>
+                <input type="text" id="position" name="positionId" value="{{.Employee.Position_id}}">
+                
+                <label for="superior">Superior ID:</label>
+                <input type="text" id="superior" name="superiorId" value="{{.Employee.Superior_id}}">
+                
+                <button type="submit">Update Profile</button>
+            </form>
+            <p><strong>Name:</strong> <span id="employee-name">{{.Employee.First_name}} {{.Employee.Last_name}}</span></p>
+            <p><strong>Email:</strong> <span id="employee-email">{{.Employee.Email}}</span></p>
+            <p><strong>Phone Number:</strong> <span id="employee-phone">{{.Employee.Phone_number}}</span></p>
+            <p><strong>Department ID:</strong> <span id="employee-department">{{.Employee.Department_id}}</span></p>
+            <p><strong>Position ID:</strong> <span id="employee-position">{{.Employee.Position_id}}</span></p>
+            <p><strong>Superior ID:</strong> <span id="employee-superior">{{.Employee.Superior_id}}</span></p>
+            <button id="delete-employee">Delete Profile</button>
+        </section>
+        <section id="employee-leaves">
+            <h2>Leaves</h2>
+            <div id="calendar"></div>
+            <button id="add-leave">Add Leave</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 HR Management System</p>
+    </footer>
+</body>
+</html>

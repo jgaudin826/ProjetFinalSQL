@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"ProjetFinalSQL/functions"
 )
 
 var port = ":8080"
@@ -16,14 +17,14 @@ func main() {
 	//! All pages redirection path
 	http.HandleFunc("/", Home)
 	// http.HandleFunc("/team/", Team)
-	// http.HandleFunc("/employee/", Employee)
+	http.HandleFunc("/employee/", Employee)
 	// http.HandleFunc("/department/", Department)
 	//http.HandleFunc("/404", NotFound)
 
 	// !Forms routes
 	// http.HandleFunc("/createEmployee", functions.CreateEmployee)
-	// http.HandleFunc("/updateEmployee", functions.UpdateEmployee)
-	// http.HandleFunc("/deleteEmployee", functions.DeleteEmployee)
+	http.HandleFunc("/updateEmployee", functions.UpdateEmployee)
+	http.HandleFunc("/deleteEmployee", functions.DeleteEmployee)
 	// http.HandleFunc("/createTeam", functions.CreateTeam)
 	// http.HandleFunc("/updateTeam", functions.UpdateTeam)
 	// http.HandleFunc("/deleteTeam", functions.DeleteTeam)

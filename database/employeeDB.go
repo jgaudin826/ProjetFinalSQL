@@ -23,7 +23,7 @@ type Employee struct {
 // It takes an Employee struct, http.ResponseWriter, and *http.Request as arguments.
 func AddEmployee(employee Employee, w http.ResponseWriter, r *http.Request) {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
@@ -38,18 +38,30 @@ func AddEmployee(employee Employee, w http.ResponseWriter, r *http.Request) {
 // It takes a UUID string, http.ResponseWriter, and *http.Request as arguments, and returns an Employee struct.
 func GetEmployeeByUuid(uuid string, w http.ResponseWriter, r *http.Request) Employee {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT * FROM employee WHERE uuid = '" + uuid + "'")
-	defer rows.Close()
+	rows, err := db.Query("SELECT * FROM employee WHERE uuid = ?", uuid)
+	if err != nil {
+		log.Printf("Error querying employee: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return Employee{} 
+	}
+	defer rows.Close() 
 
 	employee := Employee{}
 
-	for rows.Next() {
-		rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_id, &employee.Position_id, &employee.Superior_id)
+	if rows.Next() {
+		err = rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_id, &employee.Position_id, &employee.Superior_id)
+		if err != nil {
+			log.Printf("Error scanning employee: %v", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return Employee{}
+		}
+	} else {
+		return Employee{}
 	}
 
 	return employee
@@ -59,7 +71,7 @@ func GetEmployeeByUuid(uuid string, w http.ResponseWriter, r *http.Request) Empl
 // It takes a firstname and lastname string, http.ResponseWriter, and *http.Request as arguments, and returns an Employee struct.
 func GetEmployeeByName(firstName string, lastName string, w http.ResponseWriter, r *http.Request) Employee {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
@@ -80,12 +92,12 @@ func GetEmployeeByName(firstName string, lastName string, w http.ResponseWriter,
 // It takes an Employee struct, http.ResponseWriter, and *http.Request as arguments.
 func UpdateEmployeeInfo(employee Employee, w http.ResponseWriter, r *http.Request) {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=off")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
 
-	query, err := db.Prepare("UPDATE employee SET last_name = ?, first_name = ?, email = ?, phone_number = ?, department_id = ?, position_id = ?, superior_id = ? WHERE uuid = ?")
+	query, err := db.Prepare("UPDATE employee SET last_name = ?, first_name = ?, email = ?, phone_number = ?, department_uuid = ?, position_uuid = ?, superior_uuid = ? WHERE uuid = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
@@ -104,7 +116,7 @@ func UpdateEmployeeInfo(employee Employee, w http.ResponseWriter, r *http.Reques
 // It takes an employee UUID string, http.ResponseWriter, and *http.Request as arguments.
 func DeleteEmployee(employeeUuid string, w http.ResponseWriter, r *http.Request) {
 	// Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the database at the end of the function
 	defer db.Close()
