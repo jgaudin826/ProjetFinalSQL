@@ -19,19 +19,6 @@ type Employee struct {
 	Superior_id   string
 }
 
-type EmployeeInfo struct {
-	Uuid          string
-	Last_name     string
-	First_name    string
-	Email         string
-	Phone_number  string
-	Department_id string
-	Department_name string
-	Position_id   string
-	Position_name string
-	Superior_id   string
-	Superior_name string
-}
 
 // AddEmployee opens the database connection and adds an employee to it using the INSERT INTO SQL command.
 // It takes an Employee struct, http.ResponseWriter, and *http.Request as arguments.
@@ -50,7 +37,7 @@ func AddEmployee(employee Employee, w http.ResponseWriter, r *http.Request) {
 
 // GetEmployeeByUuid retrieves an employee by their UUID using the SELECT * FROM SQL command.
 // It takes a UUID string, http.ResponseWriter, and *http.Request as arguments, and returns an Employee struct.
-func GetEmployeeByUuid(uuid string, w http.ResponseWriter, r *http.Request) EmployeeInfo {
+func GetEmployeeByUuid(uuid string, w http.ResponseWriter, r *http.Request) Employee {
 	// Open the database connection
 	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)

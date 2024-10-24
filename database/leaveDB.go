@@ -51,7 +51,7 @@ func GetLeaveByUuid(uuid string, w http.ResponseWriter, r *http.Request) Leave {
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT * FROM leave WHERE uuid = '" + uuid + "'")
+	rows, err := db.Query("SELECT * FROM leave WHERE uuid = ?", uuid)
 	defer rows.Close()
 
 	leave := Leave{}
@@ -61,6 +61,27 @@ func GetLeaveByUuid(uuid string, w http.ResponseWriter, r *http.Request) Leave {
 	}
 
 	return leave
+}
+
+func GetLeaveByEmployeeUuid(employeeUuid string, w http.ResponseWriter, r *http.Request) []Leave {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, _ := db.Query("SELECT * FROM leave WHERE employee_uuid = ?", employeeUuid)
+	defer rows.Close()
+
+	var leaves []Leave
+
+	for rows.Next() {
+		leave := Leave{}
+		rows.Scan(&leave.Uuid, &leave.EmployeeUuid, &leave.StartDate, &leave.EndDate, &leave.LeaveType)
+		leaves = append(leaves, leave)
+	}
+
+	return leaves
 }
 
 /*
