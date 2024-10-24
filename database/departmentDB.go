@@ -111,6 +111,35 @@ func GetEmployeesByDepartment(departmentUuid string, w http.ResponseWriter, r *h
 	return employeeList
 }
 
+func GetAllDepartments(w http.ResponseWriter, r *http.Request) []DepartmentInfo {
+	// Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the database at the end of the function
+	defer db.Close()
+
+	rows, err := db.Query("SELECT d.uuid, d.department_leader_uuid, e.first_name || ' ' || e.last_name as department_leader_name, d.name FROM department d LEFT JOIN employee e ON d.department_leader_uuid = e.uuid")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	departmentList := make([]DepartmentInfo, 0)
+
+	for rows.Next() {
+		department := DepartmentInfo{}
+		err = rows.Scan(&department.Uuid, &department.Department_leader_uuid, &department.Department_leader_name, &department.Name)
+		CheckErr(err, w, r)
+
+		departmentList = append(departmentList, department)
+	}
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	return departmentList
+}
+
 // UpdateDepartmentInfo updates a department's information using the UPDATE SQL command.
 // It takes a Department struct, http.ResponseWriter, and *http.Request as arguments.
 func UpdateDepartmentInfo(department Department, w http.ResponseWriter, r *http.Request) {

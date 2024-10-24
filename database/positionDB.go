@@ -106,6 +106,28 @@ func GetEmployeesByPosition(positionUuid string, w http.ResponseWriter, r *http.
 	return employeeList
 }
 
+func GetAllPositions(w http.ResponseWriter, r *http.Request) []Position {
+	// Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the database at the end of the function
+	defer db.Close()
+
+	rows, err := db.Query("SELECT * FROM position")
+	CheckErr(err, w, r)
+	defer rows.Close()
+
+	positions := make([]Position, 0)
+
+	for rows.Next() {
+		position := Position{}
+		rows.Scan(&position.Uuid, &position.Title, &position.Salary)
+		positions = append(positions, position)
+	}
+
+	return positions
+}
+
 /*
 !UpdatePositionInfo function is used to update position information by using UPDATE sql command. She take as argument a position type, a writer, a request.
 */
