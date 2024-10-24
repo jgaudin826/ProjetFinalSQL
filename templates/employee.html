@@ -8,13 +8,30 @@
     <link rel="stylesheet" href="/static/style/employee.css">
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script src="/static/scripts/employee.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            console.log({{.Events}});
+            
+            var events = ({{.Events}}); 
+
+            console.log(events);
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: events 
+            });
+            
+            calendar.render();
+        });
+    </script>
 </head>
 <body>
     <header>
         <h1>Employee Profile</h1>
     </header>
     <main>
-        <p><strong>Events :</strong><span>{{.Events}}</span></p>
         <section id="employee-info">
             <h2>Profile Information</h2>
             <form id="update-employee-form">
@@ -45,9 +62,9 @@
             <p><strong>Name:</strong> <span id="employee-name">{{.Employee.First_name}} {{.Employee.Last_name}}</span></p>
             <p><strong>Email:</strong> <span id="employee-email">{{.Employee.Email}}</span></p>
             <p><strong>Phone Number:</strong> <span id="employee-phone">{{.Employee.Phone_number}}</span></p>
-            <p><strong>Department ID:</strong> <span id="employee-department">{{.Employee.Department_id}}</span></p>
-            <p><strong>Position ID:</strong> <span id="employee-position">{{.Employee.Position_id}}</span></p>
-            <p><strong>Superior ID:</strong> <span id="employee-superior">{{.Employee.Superior_id}}</span></p>
+            <p><strong>Department:</strong> <span id="employee-department">{{.Employee.Department_name}}</span></p>
+            <p><strong>Position:</strong> <span id="employee-position">{{.Employee.Position_name}}</span></p>
+            <p><strong>Superior:</strong> <span id="employee-superior">{{.Employee.Superior_name}}</span></p>
             <button id="delete-employee">Delete Profile</button>
         </section>
         <section id="employee-leaves">

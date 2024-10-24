@@ -1,3 +1,4 @@
+// employee.go
 package main
 
 import (
@@ -14,22 +15,17 @@ type EmployeeInfo struct {
 	Email         string
 	Phone_number  string
 	Department_id string
+	Department_name string 
 	Position_id   string
+	Position_name   string 
 	Superior_id   string
-}
-
-type EmployeeLeave struct {
-	Uuid         string
-	EmployeeUuid string
-	StartDate    string
-	EndDate      string
-	LeaveType    string
+	Superior_name   string 
 }
 
 type Event struct {
-	Title string
-	Start string
-	End   string
+	Title string `json:"title"`
+	Start string `json:"start"`
+	End   string `json:"end"`
 }
 
 func Employee(w http.ResponseWriter, r *http.Request) {
@@ -40,13 +36,15 @@ func Employee(w http.ResponseWriter, r *http.Request) {
 
 	employeeUuid := r.URL.Query().Get("uuid")
 
-	log.Printf(employeeUuid)
+	log.Printf("Employee UUID: %v", employeeUuid)
 
-	employee := database.GetEmployeeByUuid(employeeUuid, w, r)
-	if (employee == database.Employee{}) {
+	employeeInfo := database.GetEmployeeByUuid(employeeUuid, w, r) 
+	if (employeeInfo == database.EmployeeInfo{}) { 
 		http.Error(w, "Employee not found", http.StatusNotFound)
 		return
 	}
+
+	log.Printf("Employee Info: %v", employeeInfo)
 
 	leaves := database.GetLeaveByEmployeeUuid(employeeUuid, w, r)
 	
@@ -70,17 +68,20 @@ func Employee(w http.ResponseWriter, r *http.Request) {
 
 	err = tmpl.Execute(w, struct {
 		Employee EmployeeInfo
-		Events  []Event
+		Events   []Event
 	}{
 		Employee: EmployeeInfo{
-			Uuid:          employee.Uuid, 
-			First_name:    employee.First_name,
-			Last_name:     employee.Last_name,
-			Email:         employee.Email,
-			Phone_number:  employee.Phone_number,
-			Department_id: employee.Department_id,
-			Position_id:   employee.Position_id,
-			Superior_id:   employee.Superior_id,
+			Uuid:          employeeInfo.Uuid, 
+			First_name:    employeeInfo.First_name,
+			Last_name:     employeeInfo.Last_name,
+			Email:         employeeInfo.Email,
+			Phone_number:  employeeInfo.Phone_number,
+			Department_id: employeeInfo.Department_uuid,
+			Position_id:   employeeInfo.Position_uuid,
+			Superior_id:   employeeInfo.Superior_uuid,
+			Department_name: employeeInfo.Department_name,
+			Position_name:   employeeInfo.Position_name,
+			Superior_name:   employeeInfo.Superior_name,  
 		},
 		Events: events,
 	})
