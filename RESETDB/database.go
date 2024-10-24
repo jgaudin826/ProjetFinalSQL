@@ -45,9 +45,9 @@ CREATE TABLE employee(
 	FOREIGN KEY (superior_uuid) REFERENCES employee(uuid)ON DELETE CASCADE);
 
 CREATE TABLE department( 
-	uuid VARCHAR(255) NOT NULL PRIMARY KEY, 
+	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
+	department_leader_uuid VARCHAR(255),  
 	name VARCHAR(255),
-	department_leader_uuid VARCHAR(255), 
 	FOREIGN KEY (department_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE
 	);
 
