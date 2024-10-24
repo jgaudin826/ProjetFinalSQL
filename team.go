@@ -30,10 +30,12 @@ func Team(w http.ResponseWriter, r *http.Request) {
 	team := database.GetTeamByUuid(teamUuid, w, r)
 
 	teamPage := struct {
+		Uuid         string
 		Name         string
 		Leader       string
 		EmployeeList []database.EmployeeInfo
 	}{
+		Uuid:         team.Uuid,
 		Name:         team.Name,
 		Leader:       team.Team_leader_name,
 		EmployeeList: database.GetEmployeesByTeam(team.Uuid, w, r),

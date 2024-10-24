@@ -183,7 +183,7 @@ func GetEmployeesByTeam(teamUuid string, w http.ResponseWriter, r *http.Request)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, err := db.Query("SELECT team.uuid, team.team_leader_uuid, employee.first_name || ' ' || employee.last_name, team.name FROM team JOIN employee ON employee.uuid = team.team_leader_uuid JOIN employee_team ON employee.uuid = employee_team.employee_uuid WHERE employee_team.team_uuid='" + teamUuid + "'")
+	rows, err := db.Query("SELECT e.uuid, e.last_name, e.first_name, e.email, e.phone_number, e.department_uuid, d.name as department_name, e.position_uuid, p.title as position_name, e.superior_uuid, s.first_name || ' ' || s.last_name as superior_name FROM employee e LEFT JOIN department d ON e.department_uuid = d.uuid LEFT JOIN position p ON e.position_uuid = p.uuid LEFT JOIN employee s ON e.superior_uuid = s.uuid JOIN employee_team et ON et.employee_uuid = e.uuid WHERE et.team_uuid='" + teamUuid + "'")
 	defer rows.Close()
 
 	err = rows.Err()

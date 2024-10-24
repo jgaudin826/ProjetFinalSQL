@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style/style.css">
     <!-- <link rel="stylesheet" href="/static/style/team.css"> -->
-    <title>Departement</title>
+    <title>Position</title>
 </head>
 <body>
     
@@ -13,19 +13,19 @@
     <script src="/static/scripts/javascript.js" type="module"></script>
     <!-- <script src="/static/scripts/team.js" type="module"></script> -->
 
-    <h1>Department {{.Name}}</h1>
-    <h3>Leader : {{.Leader}}</h3>
+    <h1>Position {{.Name}}</h1>
+    <h3>Salary : {{.Salary}}</h3>
     <section class="employees">
     <table>
         <tr>
           <th>Employee</th>
-          <th>Position</th>
+          <th>Deartment</th>
           <th>Superior</th>
         </tr>
         {{range .EmployeeList}}
         <tr>
             <td>{{.First_name}} {{.Last_name}}</td>
-            <td>{{.Position_name}}</td>
+            <td>{{.Department_name}}</td>
             <td>{{.Superior_name}}</td>
         </tr>
         {{end}}

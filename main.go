@@ -18,7 +18,8 @@ func main() {
 	http.HandleFunc("/", Home)
 	http.HandleFunc("/team/", Team)
 	// http.HandleFunc("/employee/", Employee)
-	// http.HandleFunc("/department/", Department)
+	http.HandleFunc("/department/", Department)
+	http.HandleFunc("/position/", Position)
 	// http.HandleFunc("/404", NotFound)
 
 	//!Forms routes

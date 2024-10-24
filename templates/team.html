@@ -16,20 +16,31 @@
     <h1>Team {{.Name}}</h1>
     <h3>Leader : {{.Leader}}</h3>
     <section class="employees">
-    <h3>Members</h3>
-    {{range .EmployeeList}}
-        <p>{{.First_name}} {{.Last_name}}</p>
-    {{end}}
-    </section>
-    <h2>---------------</h2>
-    <section id="createTeamForm" class="form">
-        <form action="/createTeam" method="post">
-            <h1 class="title">Create a new Team</h1>
-            <input class="textInput" type="text" placeholder="Team name" name="teamName" required>
-            <input class="textInput" type="text" placeholder="Team leader first name" name="leaderFirstName" required>
-            <input class="textInput" type="text" placeholder="Team leader last name" name="leaderLastName" required>
-            <input class="button" type="submit" value="Create" >
-        </form>
+    <table>
+        <tr>
+          <th>Employee</th>
+          <th>Departement</th>
+          <th>Position</th>
+          <th></th>
+        </tr>
+        {{range .EmployeeList}}
+        <tr>
+            <td>{{.First_name}} {{.Last_name}}</td>
+            <td>{{.Department_name}}</td>
+            <td>{{.Position_name}}</td>
+            <td>
+                <section id="deleteEmployeeTeam" class="form">
+                    <form method="post" action="/deletePost">
+                    <input type="text" name="employeeUuid" value="{{.Uuid}}" hidden>
+                    <input type="text" name="employeeUuid" value="{{$.Uuid}}" hidden>
+                    <input class="button" type="submit" value="Remove" >
+                    </form>
+                </section>
+            </td>
+        </tr>
+        {{end}}
+      </table>
+    
     </section>
 
 <!--Messages Pop-ups de confirmation ou erreur-->

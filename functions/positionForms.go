@@ -32,7 +32,7 @@ func CreatePosition(w http.ResponseWriter, r *http.Request) {
 
 	positionUuid := GetNewUuid()
 
-	newposition := database.Position{Uuid: positionUuid, Name: positionName, Salary: salaryInt}
+	newposition := database.Position{Uuid: positionUuid, Title: positionName, Salary: salaryInt}
 	database.AddPosition(newposition, w, r)
 
 	http.Redirect(w, r, "/position/"+positionUuid+"?type=success&message=Position+created+successfuly+!", http.StatusSeeOther)
@@ -68,7 +68,7 @@ func UpdatePosition(w http.ResponseWriter, r *http.Request) {
 	salary := r.FormValue("salary")
 	salaryInt, _ := strconv.Atoi(salary)
 
-	newposition := database.Position{Uuid: positionUuid, Name: newpositionName, Salary: salaryInt}
+	newposition := database.Position{Uuid: positionUuid, Title: newpositionName, Salary: salaryInt}
 	database.UpdatePositionInfo(newposition, w, r)
 
 	http.Redirect(w, r, "/position/"+positionUuid+"?type=success&message=Position+successfully+update+!", http.StatusSeeOther)

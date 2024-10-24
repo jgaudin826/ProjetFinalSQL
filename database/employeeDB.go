@@ -57,7 +57,7 @@ func GetEmployeeByUuid(uuid string, w http.ResponseWriter, r *http.Request) Empl
 	// Close the database at the end of the function
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT emp.uuid, emp.last_name, emp.first_name, emp.email, emp.phone_number, emp.department_uuid, department.name, emp.position_uuid, position.name, emp.superior_uuid, sup.first_name || ' ' || sup.last_name FROM employee emp JOIN employee sup ON sup.uuid = emp.superior_uuid JOIN department ON department.uuid = emp.department_uuid JOIN position ON position.uuid = emp.position_uuid WHERE emp.uuid = '" + uuid + "'")
+	rows, _ := db.Query("SELECT e.uuid, e.last_name, e.first_name, e.email, e.phone_number, e.department_uuid, d.name as department_name, e.position_uuid, p.title as position_name, e.superior_uuid, s.first_name || ' ' || s.last_name as superior_name FROM employee e LEFT JOIN department d ON e.department_uuid = d.uuid LEFT JOIN position p ON e.position_uuid = p.uuid LEFT JOIN employee s ON e.superior_uuid = s.uuid WHERE e.uuid = '" + uuid + "'")
 	defer rows.Close()
 
 	employee := EmployeeInfo{}

@@ -79,6 +79,38 @@ func GetDepartmentByName(departmentName string, w http.ResponseWriter, r *http.R
 	return department
 }
 
+/*
+!GetEmployeesByTeam function open data base and get users on a community by using the SELECT * FROM sql command she take as argument an int type and a writer and request and return a slice of User.
+*/
+func GetEmployeesByDepartment(departmentUuid string, w http.ResponseWriter, r *http.Request) []EmployeeInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT e.uuid, e.last_name, e.first_name, e.email, e.phone_number, e.department_uuid, d.name as department_name, e.position_uuid, p.title as position_name, e.superior_uuid, s.first_name || ' ' || s.last_name as superior_name FROM employee e LEFT JOIN department d ON e.department_uuid = d.uuid LEFT JOIN position p ON e.position_uuid = p.uuid LEFT JOIN employee s ON e.superior_uuid = s.uuid WHERE e.department_uuid='" + departmentUuid + "'")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	employeeList := make([]EmployeeInfo, 0)
+
+	for rows.Next() {
+		employee := EmployeeInfo{}
+		err = rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_uuid, &employee.Department_name, &employee.Position_uuid, &employee.Position_name, &employee.Superior_uuid, &employee.Superior_name)
+		CheckErr(err, w, r)
+
+		employeeList = append(employeeList, employee)
+	}
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	return employeeList
+}
+
 // UpdateDepartmentInfo updates a department's information using the UPDATE SQL command.
 // It takes a Department struct, http.ResponseWriter, and *http.Request as arguments.
 func UpdateDepartmentInfo(department Department, w http.ResponseWriter, r *http.Request) {

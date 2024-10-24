@@ -37,9 +37,9 @@ CREATE TABLE employee(
 	first_name VARCHAR(255), 
 	email VARCHAR(64), 
 	phone_number VARCHAR(14), 
-	department_uuid INTEGER,
-	position_uuid INTEGER,
-	superior_uuid INTEGER,
+	department_uuid VARCHAR(255),
+	position_uuid VARCHAR(255),
+	superior_uuid VARCHAR(255),
 	FOREIGN KEY (department_uuid) REFERENCES department(uuid)ON DELETE CASCADE,
 	FOREIGN KEY (position_uuid) REFERENCES position(uuid)ON DELETE CASCADE,
 	FOREIGN KEY (superior_uuid) REFERENCES employee(uuid)ON DELETE CASCADE);
@@ -47,13 +47,13 @@ CREATE TABLE employee(
 CREATE TABLE department( 
 	uuid VARCHAR(255) NOT NULL PRIMARY KEY, 
 	name VARCHAR(255),
-	department_leader_uuid INTEGER, 
+	department_leader_uuid VARCHAR(255), 
 	FOREIGN KEY (department_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE
 	);
 
 CREATE TABLE team(
 	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
-	team_leader_uuid INTEGER,
+	team_leader_uuid VARCHAR(255),
 	name VARCHAR(32) UNIQUE,
 	FOREIGN KEY (team_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE);
 
@@ -64,15 +64,15 @@ CREATE TABLE position(
 
 CREATE TABLE leave(
 	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
-	employee_uuid INTEGER, 
+	employee_uuid VARCHAR(255), 
 	start_date DATETIME,
 	end_date DATETIME,
 	leave_type VARCHAR(255), 
 	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid) ON DELETE CASCADE);
 
 CREATE TABLE employee_team(
-	employee_uuid INTEGER, 
-	team_uuid INTEGER, 
+	employee_uuid VARCHAR(255), 
+	team_uuid VARCHAR(255), 
 	PRIMARY KEY(employee_uuid, team_uuid), 
 	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid) ON DELETE CASCADE, 
 	FOREIGN KEY (team_uuid) REFERENCES team(uuid) ON DELETE CASCADE);
@@ -86,7 +86,21 @@ CREATE TABLE employee_team(
 	fmt.Println("Successfuly created the database!")
 
 	inserts := `INSERT INTO employee (uuid, last_name, first_name, email, phone_number, department_uuid, position_uuid, superior_uuid) VALUES 
-	('1', 'Doe', 'John', 'email', '06', '1', '1', '1');`
+	('1', 'Doe', 'John', 'email', '06', '1', '1', '2'),
+	('2', 'Smith', 'Jane', 'email2', '07', '1', '2', '1');
+	
+	INSERT INTO team (uuid, team_leader_uuid, name) VALUES 
+	('1', '1', 'Accounting');
+	
+	INSERT INTO employee_team (employee_uuid, team_uuid) VALUES 
+	('1', '1');
+	
+	INSERT INTO department (uuid, department_leader_uuid, name) VALUES 
+	('1', '1', 'HR');
+	
+	INSERT INTO position (uuid, title, salary) VALUES 
+	('1', 'Team Leader', 20000),
+	('2', 'Department Leader', 35000);`
 
 	_, err = db.Exec(inserts)
 	fmt.Println("insert values:")
