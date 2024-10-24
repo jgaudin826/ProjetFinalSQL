@@ -34,7 +34,7 @@ func main() {
 	// http.HandleFunc("/createPosition", functions.CreatePosition)
 	// http.HandleFunc("/updatePosition", functions.UpdatePosition)
 	// http.HandleFunc("/deletePosition", functions.DeletePosition)
-	// http.HandleFunc("/createLeave", functions.CreateLeave)
+	http.HandleFunc("/createLeave", functions.CreateLeave)
 	// http.HandleFunc("/updateLeave", functions.UpdateLeave)
 	// http.HandleFunc("/deleteLeave", functions.DeleteLeave)
 	// http.HandleFunc("/createEmployeeTeam", functions.CreateEmployeeTeam)

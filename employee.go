@@ -18,6 +18,20 @@ type EmployeeInfo struct {
 	Superior_id   string
 }
 
+type EmployeeLeave struct {
+	Uuid         string
+	EmployeeUuid string
+	StartDate    string
+	EndDate      string
+	LeaveType    string
+}
+
+type Event struct {
+	Title string
+	Start string
+	End   string
+}
+
 func Employee(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		http.Error(w, "Method is not supported.", http.StatusNotFound)
@@ -34,6 +48,19 @@ func Employee(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	leaves := database.GetLeaveByEmployeeUuid(employeeUuid, w, r)
+	
+	var events []Event
+	for _, leave := range leaves {
+		events = append(events, Event{
+			Title: leave.LeaveType,
+			Start: leave.StartDate.Format("2006-01-02"),
+			End:   leave.EndDate.Format("2006-01-02"),   
+		})
+	}
+
+	log.Print("Events JSON: ", events)
+
 	tmpl, err := template.ParseFiles("./templates/employee.html") 
 	if err != nil {
 		log.Printf("\033[31mError parsing template: %v\033[0m", err)
@@ -43,6 +70,7 @@ func Employee(w http.ResponseWriter, r *http.Request) {
 
 	err = tmpl.Execute(w, struct {
 		Employee EmployeeInfo
+		Events  []Event
 	}{
 		Employee: EmployeeInfo{
 			Uuid:          employee.Uuid, 
@@ -54,6 +82,7 @@ func Employee(w http.ResponseWriter, r *http.Request) {
 			Position_id:   employee.Position_id,
 			Superior_id:   employee.Superior_id,
 		},
+		Events: events,
 	})
 	if err != nil {
 		log.Printf("\033[31mError executing template: %v\033[0m", err)

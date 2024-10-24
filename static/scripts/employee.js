@@ -1,18 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: '/api/employee/leaves', 
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        }
-    });
-
-    calendar.render();
-
     document.getElementById('update-employee-form').addEventListener('submit', function(event) {
         event.preventDefault(); 
         const formData = new FormData(this);
@@ -48,5 +34,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+    });
+
+    document.getElementById('add-leave-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch('/createLeave', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Erreur lors de la création de la demande de congé: ' + response.statusText);
+            }
+        }).catch(error => {
+            alert('Erreur lors de la création de la demande de congé: ' + error.message);
+        });
     });
 });
