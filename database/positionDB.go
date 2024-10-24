@@ -10,7 +10,7 @@ import (
 
 type Position struct {
 	Uuid   string
-	Name   string
+	Title  string
 	Salary int
 }
 
@@ -19,13 +19,13 @@ type Position struct {
 */
 func AddPosition(position Position, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	query, err2 := db.Prepare("INSERT INTO position (uuid, name, salary) VALUES (?, ?, ?)")
-	query.Exec(position.Uuid, position.Name, position.Salary)
+	query, err2 := db.Prepare("INSERT INTO position (uuid, title, salary) VALUES (?, ?, ?)")
+	query.Exec(position.Uuid, position.Title, position.Salary)
 	CheckErr(err2, w, r)
 	defer query.Close()
 }
@@ -35,7 +35,7 @@ func AddPosition(position Position, w http.ResponseWriter, r *http.Request) {
 */
 func GetPositionByUuid(uuid string, w http.ResponseWriter, r *http.Request) Position {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
@@ -46,7 +46,7 @@ func GetPositionByUuid(uuid string, w http.ResponseWriter, r *http.Request) Posi
 	position := Position{}
 
 	for rows.Next() {
-		rows.Scan(&position.Uuid, &position.Name, &position.Salary)
+		rows.Scan(&position.Uuid, &position.Title, &position.Salary)
 	}
 
 	return position
@@ -57,21 +57,53 @@ func GetPositionByUuid(uuid string, w http.ResponseWriter, r *http.Request) Posi
 */
 func GetPositionByName(positionName string, w http.ResponseWriter, r *http.Request) Position {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	rows, _ := db.Query("SELECT * FROM position WHERE name = '" + positionName + "'")
+	rows, _ := db.Query("SELECT * FROM position WHERE title = '" + positionName + "'")
 	defer rows.Close()
 
 	position := Position{}
 
 	for rows.Next() {
-		rows.Scan(&position.Uuid, &position.Name, &position.Salary)
+		rows.Scan(&position.Uuid, &position.Title, &position.Salary)
 	}
 
 	return position
+}
+
+/*
+!GetEmployeesByPosition function open data base and get users on a community by using the SELECT * FROM sql command she take as argument an int type and a writer and request and return a slice of User.
+*/
+func GetEmployeesByPosition(positionUuid string, w http.ResponseWriter, r *http.Request) []EmployeeInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT e.uuid, e.last_name, e.first_name, e.email, e.phone_number, e.department_uuid, d.name as department_name, e.position_uuid, p.title as position_name, e.superior_uuid, s.first_name || ' ' || s.last_name as superior_name FROM employee e LEFT JOIN department d ON e.department_uuid = d.uuid LEFT JOIN position p ON e.position_uuid = p.uuid LEFT JOIN employee s ON e.superior_uuid = s.uuid WHERE e.position_uuid='" + positionUuid + "'")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	employeeList := make([]EmployeeInfo, 0)
+
+	for rows.Next() {
+		employee := EmployeeInfo{}
+		err = rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_uuid, &employee.Department_name, &employee.Position_uuid, &employee.Position_name, &employee.Superior_uuid, &employee.Superior_name)
+		CheckErr(err, w, r)
+
+		employeeList = append(employeeList, employee)
+	}
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	return employeeList
 }
 
 /*
@@ -79,16 +111,16 @@ func GetPositionByName(positionName string, w http.ResponseWriter, r *http.Reque
 */
 func UpdatePositionInfo(position Position, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()
 
-	query, err := db.Prepare("UPDATE position SET name= ?, salary = ? WHERE uuid = ?")
+	query, err := db.Prepare("UPDATE position SET title= ?, salary = ? WHERE uuid = ?")
 	CheckErr(err, w, r)
 	defer query.Close()
 
-	res, err := query.Exec(position.Name, position.Salary, position.Uuid)
+	res, err := query.Exec(position.Title, position.Salary, position.Uuid)
 	CheckErr(err, w, r)
 
 	affected, err := res.RowsAffected()
@@ -104,7 +136,7 @@ func UpdatePositionInfo(position Position, w http.ResponseWriter, r *http.Reques
 */
 func DeletePosition(positionUuid string, w http.ResponseWriter, r *http.Request) {
 	//Open the database connection
-	db, err := sql.Open("sqlite3", "threadcore.db?_foreign_keys=on")
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
 	CheckErr(err, w, r)
 	// Close the batabase at the end of the program
 	defer db.Close()

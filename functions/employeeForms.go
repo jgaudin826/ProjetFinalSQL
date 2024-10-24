@@ -14,14 +14,14 @@ func CreateEmployee(w http.ResponseWriter, r *http.Request) {
 	}
 
 	employee := database.Employee{
-		Uuid:          GetNewUuid(),
-		Last_name:     r.FormValue("lastName"),
-		First_name:    r.FormValue("firstName"),
-		Email:         r.FormValue("email"),
-		Phone_number:  r.FormValue("phoneNumber"),
-		Department_id: r.FormValue("departmentId"),
-		Position_id:   r.FormValue("positionId"),
-		Superior_id:   r.FormValue("superiorId"),
+		Uuid:            GetNewUuid(),
+		Last_name:       r.FormValue("lastName"),
+		First_name:      r.FormValue("firstName"),
+		Email:           r.FormValue("email"),
+		Phone_number:    r.FormValue("phoneNumber"),
+		Department_uuid: r.FormValue("departmentId"),
+		Position_uuid:   r.FormValue("positionId"),
+		Superior_uuid:   r.FormValue("superiorId"),
 	}
 
 	database.AddEmployee(employee, w, r)
@@ -36,23 +36,26 @@ func UpdateEmployee(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    employeeUuid := r.FormValue("employeeUuid")
-    employee := database.GetEmployeeByUuid(employeeUuid, w, r)
-    if (employee == database.Employee{}) {
-        fmt.Println("Employee does not exist")
-        http.Redirect(w, r, "/employees?type=error&message=Employee+not+found!", http.StatusSeeOther)
-        return
-    }
+	employeeUuid := r.FormValue("employeeUuid")
+	employee := database.GetEmployeeByUuid(employeeUuid, w, r)
+	if (employee == database.EmployeeInfo{}) {
+		fmt.Println("Employee does not exist")
+		http.Redirect(w, r, "/employees?type=error&message=Employee+not+found!", http.StatusSeeOther)
+		return
+	}
 
-    employee.Last_name = r.FormValue("lastName")
-    employee.First_name = r.FormValue("firstName")
-    employee.Email = r.FormValue("email")
-    employee.Phone_number = r.FormValue("phoneNumber")
-    employee.Department_id = r.FormValue("departmentId")
-    employee.Position_id = r.FormValue("positionId")
-    employee.Superior_id = r.FormValue("superiorId")
+	newEmployee := database.Employee{
+		Uuid:            employeeUuid,
+		Last_name:       r.FormValue("lastName"),
+		First_name:      r.FormValue("firstName"),
+		Email:           r.FormValue("email"),
+		Phone_number:    r.FormValue("phoneNumber"),
+		Department_uuid: r.FormValue("departmentId"),
+		Position_uuid:   r.FormValue("positionId"),
+		Superior_uuid:   r.FormValue("superiorId"),
+	}
 
-	database.UpdateEmployeeInfo(employee, w, r) 
+	database.UpdateEmployeeInfo(newEmployee, w, r)
 
     http.Redirect(w, r, "/employee/?uuid="+employeeUuid, http.StatusSeeOther)
 }
@@ -66,7 +69,7 @@ func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 
 	employeeUuid := r.FormValue("employeeUuid")
 	employee := database.GetEmployeeByUuid(employeeUuid, w, r)
-	if (employee == database.Employee{}) {
+	if (employee == database.EmployeeInfo{}) {
 		fmt.Println("Employee does not exist")
 		http.Redirect(w, r, "/employees?type=error&message=Employee+not+found!", http.StatusSeeOther)
 		return
