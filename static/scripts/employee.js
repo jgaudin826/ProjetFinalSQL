@@ -28,9 +28,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: formData
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = '/home'; 
+                    window.location.href = '/'; 
+                    window.location.reload();
                 } else {
                     alert('Erreur lors de la suppression de l\'employé: ' + response.statusText);
+                    window.location.href = '/';
+                    window.location.reload();
                 }
             });
         }

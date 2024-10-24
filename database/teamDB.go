@@ -81,6 +81,35 @@ func GetTeamByName(teamName string, w http.ResponseWriter, r *http.Request) Team
 	return team
 }
 
+func GetAllTeams(w http.ResponseWriter, r *http.Request) []TeamInfo {
+	//Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the batabase at the end of the program
+	defer db.Close()
+
+	rows, err := db.Query("SELECT team.uuid, team.team_leader_uuid, employee.first_name || ' ' || employee.last_name , team.name FROM team JOIN employee ON employee.uuid = team.team_leader_uuid")
+	defer rows.Close()
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	teamList := make([]TeamInfo, 0)
+
+	for rows.Next() {
+		team := TeamInfo{}
+		err = rows.Scan(&team.Uuid, &team.Team_leader_uuid, &team.Team_leader_name, &team.Name)
+		CheckErr(err, w, r)
+
+		teamList = append(teamList, team)
+	}
+
+	err = rows.Err()
+	CheckErr(err, w, r)
+
+	return teamList
+}
+
 /*
 !UpdateTeamInfo function is used to update team information by using UPDATE sql command. She take as argument a team type, a writer, a request.
 */

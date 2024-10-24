@@ -114,6 +114,27 @@ func UpdateEmployeeInfo(employee Employee, w http.ResponseWriter, r *http.Reques
 	}
 }
 
+func GetAllEmployees(w http.ResponseWriter, r *http.Request) []EmployeeInfo {
+	// Open the database connection
+	db, err := sql.Open("sqlite3", "ProjetFinalSQL.db?_foreign_keys=on")
+	CheckErr(err, w, r)
+	// Close the database at the end of the function
+	defer db.Close()
+
+	rows, _ := db.Query("SELECT e.uuid, e.last_name, e.first_name, e.email, e.phone_number, e.department_uuid, d.name as department_name, e.position_uuid, p.title as position_name, e.superior_uuid, s.first_name || ' ' || s.last_name as superior_name FROM employee e LEFT JOIN department d ON e.department_uuid = d.uuid LEFT JOIN position p ON e.position_uuid = p.uuid LEFT JOIN employee s ON e.superior_uuid = s.uuid")
+	defer rows.Close()
+
+	var employees []EmployeeInfo
+
+	for rows.Next() {
+		employee := EmployeeInfo{}
+		rows.Scan(&employee.Uuid, &employee.Last_name, &employee.First_name, &employee.Email, &employee.Phone_number, &employee.Department_uuid, &employee.Department_name, &employee.Position_uuid, &employee.Position_name, &employee.Superior_uuid, &employee.Superior_name)
+		employees = append(employees, employee)
+	}
+
+	return employees
+}
+
 // DeleteEmployee deletes an employee from the database using the DELETE SQL command.
 // It takes an employee UUID string, http.ResponseWriter, and *http.Request as arguments.
 func DeleteEmployee(employeeUuid string, w http.ResponseWriter, r *http.Request) {
