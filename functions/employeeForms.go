@@ -31,10 +31,10 @@ func CreateEmployee(w http.ResponseWriter, r *http.Request) {
 
 // UpdateEmployee collects user input and updates an existing employee
 func UpdateEmployee(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method is not supported.", http.StatusNotFound)
-		return
-	}
+    if r.Method != "POST" {
+        http.Error(w, "Method is not supported.", http.StatusNotFound)
+        return
+    }
 
 	employeeUuid := r.FormValue("employeeUuid")
 	employee := database.GetEmployeeByUuid(employeeUuid, w, r)
@@ -57,7 +57,7 @@ func UpdateEmployee(w http.ResponseWriter, r *http.Request) {
 
 	database.UpdateEmployeeInfo(newEmployee, w, r)
 
-	http.Redirect(w, r, "/employee/"+employeeUuid+"?type=success&message=Employee+updated+successfully!", http.StatusSeeOther)
+    http.Redirect(w, r, "/employee/?uuid="+employeeUuid, http.StatusSeeOther)
 }
 
 // DeleteEmployee deletes an existing employee
@@ -84,5 +84,5 @@ func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 
 	database.DeleteEmployee(employeeUuid, w, r)
 
-	http.Redirect(w, r, "/employees?type=success&message=Employee+deleted+successfully!", http.StatusSeeOther)
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }

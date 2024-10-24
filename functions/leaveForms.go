@@ -14,6 +14,8 @@ func CreateLeave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	employeeUuid := r.FormValue("employeeUuid")
+
 	startDate, err := time.Parse("2006-01-02", r.FormValue("startDate"))
 	if err != nil {
 		http.Error(w, "Invalid start date format", http.StatusBadRequest)
@@ -36,7 +38,7 @@ func CreateLeave(w http.ResponseWriter, r *http.Request) {
 
 	database.AddLeave(leave, w, r)
 
-	http.Redirect(w, r, "/leaves?type=success&message=Leave+request+created+successfully!", http.StatusSeeOther)
+	http.Redirect(w, r, "/employee/?uuid="+employeeUuid, http.StatusSeeOther)
 }
 
 // UpdateLeave collects user input and updates an existing leave request
