@@ -40,22 +40,22 @@ CREATE TABLE employee(
 	department_uuid VARCHAR(255),
 	position_uuid VARCHAR(255),
 	superior_uuid VARCHAR(255),
-	FOREIGN KEY (department_uuid) REFERENCES department(uuid),
-	FOREIGN KEY (position_uuid) REFERENCES position(uuid),
-	FOREIGN KEY (superior_uuid) REFERENCES employee(uuid));
+	FOREIGN KEY (department_uuid) REFERENCES department(uuid)ON DELETE CASCADE,
+	FOREIGN KEY (position_uuid) REFERENCES position(uuid)ON DELETE CASCADE,
+	FOREIGN KEY (superior_uuid) REFERENCES employee(uuid)ON DELETE CASCADE);
 
 CREATE TABLE department( 
 	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
 	department_leader_uuid VARCHAR(255),  
 	name VARCHAR(255),
-	FOREIGN KEY (department_leader_uuid) REFERENCES employee(uuid)
+	FOREIGN KEY (department_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE
 	);
 
 CREATE TABLE team(
 	uuid VARCHAR(255) NOT NULL PRIMARY KEY,
 	team_leader_uuid VARCHAR(255),
 	name VARCHAR(32) UNIQUE,
-	FOREIGN KEY (team_leader_uuid) REFERENCES employee(uuid));
+	FOREIGN KEY (team_leader_uuid) REFERENCES employee(uuid) ON DELETE CASCADE);
 
 CREATE TABLE position(
 	uuid VARCHAR(255) NOT NULL PRIMARY KEY, 
@@ -68,14 +68,14 @@ CREATE TABLE leave(
 	start_date DATETIME,
 	end_date DATETIME,
 	leave_type VARCHAR(255), 
-	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid));
+	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid) ON DELETE CASCADE);
 
 CREATE TABLE employee_team(
 	employee_uuid VARCHAR(255), 
 	team_uuid VARCHAR(255), 
 	PRIMARY KEY(employee_uuid, team_uuid), 
-	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid), 
-	FOREIGN KEY (team_uuid) REFERENCES team(uuid));
+	FOREIGN KEY (employee_uuid) REFERENCES employee(uuid) ON DELETE CASCADE, 
+	FOREIGN KEY (team_uuid) REFERENCES team(uuid) ON DELETE CASCADE);
 	`
 
 	_, err = db.Exec(createTables)
