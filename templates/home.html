@@ -4,85 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="/static/style/home.css"> 
 </head>
 <body>
     <h1>Home</h1>
-    <section id="createEmployeeForm" class="form">
-        <form action="/createEmployee" method="post">
-            <h1 class="title">Create a new Employee</h1>
-            <input class="textInput" type="text" placeholder="First name" name="firstName" required>
-            <input class="textInput" type="text" placeholder="Last name" name="lastName" required>
-            <input class="textInput" type="email" placeholder="Email" name="email" required>
-            <input class="textInput" type="text" placeholder="Phone number" name="phoneNumber" required>
-            <input class="textInput" type="text" placeholder="Department ID" name="departmentId" required>
-            <input class="textInput" type="text" placeholder="Position ID" name="positionId" required>
-            <input class="textInput" type="text" placeholder="Superior ID" name="superiorId" >
-            <input class="button" type="submit" value="Create" >
-        </form>
-    </section>
-    <section id="createDepartmentForm" class="form">
-        <form action="/createDepartment" method="post">
-            <h1 class="title">Create a new Department</h1>
-            <input class="textInput" type="text" placeholder="Department name" name="departmentName" required>
-            <input class="button" type="submit" value="Create" >
-        </form>
-    </section>
-    <section id="createPositionForm" class="form">
-        <form action="/createPosition" method="post">
-            <h1 class="title">Create a new Position</h1>
-            <input class="textInput" type="text" placeholder="Position name" name="positionName" required>
-            <input class="textInput" type="number" placeholder="Salary" name="salary" required>
-            <input class="button" type="submit" value="Create" >
-        </form>
-    </section>
-    <section id="createTeamForm" class="form">
-        <form action="/createTeam" method="post">
-            <h1 class="title">Create a new Team</h1>
-            <input class="textInput" type="text" placeholder="Team name" name="teamName" required>
-            <input class="textInput" type="text" placeholder="Team leader first name" name="leaderFirstName" required>
-            <input class="textInput" type="text" placeholder="Team leader last name" name="leaderLastName" required>
-            <input class="button" type="submit" value="Create" >
-        </form>
-    </section>
-    <section id="employeeList">
+
+    <div class="form-container">
+        <section id="createEmployeeForm" class="form">
+            <form action="/createEmployee" method="post">
+                <h1 class="title">Create a new Employee</h1>
+                <input class="textInput" type="text" placeholder="First name" name="firstName" required>
+                <input class="textInput" type="text" placeholder="Last name" name="lastName" required>
+                <input class="textInput" type="email" placeholder="Email" name="email" required>
+                <input class="textInput" type="text" placeholder="Phone number" name="phoneNumber" required>
+                <input class="textInput" type="text" placeholder="Department ID" name="departmentId" required>
+                <input class="textInput" type="text" placeholder="Position ID" name="positionId" required>
+                <input class="textInput" type="text" placeholder="Superior ID" name="superiorId">
+                <input class="button" type="submit" value="Create">
+            </form>
+        </section>
+
+        <section id="createDepartmentForm" class="form">
+            <form action="/createDepartment" method="post">
+                <h1 class="title">Create a new Department</h1>
+                <input class="textInput" type="text" placeholder="Department name" name="departmentName" required>
+                <input class="button" type="submit" value="Create">
+            </form>
+        </section>
+
+        <section id="createPositionForm" class="form">
+            <form action="/createPosition" method="post">
+                <h1 class="title">Create a new Position</h1>
+                <input class="textInput" type="text" placeholder="Position name" name="positionName" required>
+                <input class="textInput" type="number" placeholder="Salary" name="salary" required>
+                <input class="button" type="submit" value="Create">
+            </form>
+        </section>
+
+        <section id="createTeamForm" class="form">
+            <form action="/createTeam" method="post">
+                <h1 class="title">Create a new Team</h1>
+                <input class="textInput" type="text" placeholder="Team name" name="teamName" required>
+                <input class="textInput" type="text" placeholder="Team leader first name" name="leaderFirstName" required>
+                <input class="textInput" type="text" placeholder="Team leader last name" name="leaderLastName" required>
+                <input class="button" type="submit" value="Create">
+            </form>
+        </section>
+    </div>
+
+    <!-- Sections for Employee, Department, Position, and Team Lists -->
+    <section id="employeeList" class="card-container">
         <h1>Employees</h1>
-        <ul>
-            {{range .Employees}}
-            <li>
-                <a href="/employee/?uuid={{.Uuid}}">{{.First_name}} {{.Last_name}}</a>
-            </li>
-            {{end}}
-        </ul>
+        <div class="card">
+            <ul>
+                {{range .Employees}}
+                <li>
+                    <a href="/employee/?uuid={{.Uuid}}">{{.First_name}} {{.Last_name}}</a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
     </section>
-    <section id="departmentList">
+
+    <section id="departmentList" class="card-container">
         <h1>Departments</h1>
-        <ul>
-            {{range .Departments}}
-            <li>
-                <a href="/department/{{.Uuid}}">{{.Name}}</a>
-            </li>
-            {{end}}
-        </ul>
+        <div class="card">
+            <ul>
+                {{range .Departments}}
+                <li>
+                    <a href="/department/{{.Uuid}}">{{.Name}}</a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
     </section>
-    <section id="positionList">
+
+    <section id="positionList" class="card-container">
         <h1>Positions</h1>
-        <ul>
-            {{range .Positions}}
-            <li>
-                <a href="/position/{{.Uuid}}">{{.Title}}</a>
-            </li>
-            {{end}}
-        </ul>
+        <div class="card">
+            <ul>
+                {{range .Positions}}
+                <li>
+                    <a href="/position/{{.Uuid}}">{{.Title}}</a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
     </section>
-    <section id="teamList">
+
+    <section id="teamList" class="card-container">
         <h1>Teams</h1>
-        <ul>
-            {{range .Teams}}
-            <li>
-                <a href="/team/{{.Uuid}}">{{.Name}}</a>
-            </li>
-            {{end}}
-        </ul>
+        <div class="card">
+            <ul>
+                {{range .Teams}}
+                <li>
+                    <a href="/team/{{.Uuid}}">{{.Name}}</a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
     </section>
 </body>
 </html>
