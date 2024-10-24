@@ -34,9 +34,9 @@
         </tr>
         {{range .EmployeeList}}
         <tr>
-            <td><a href="/employee/{{.Uuid}}">{{.First_name}} {{.Last_name}}</a></td>
+            <td><a href="/employee/?uuid={{.Uuid}}">{{.First_name}} {{.Last_name}}</a></td>
             <td><a href="/department/{{.Department_uuid}}">{{.Department_name}}</a></td>
-            <td><a href="/employee/{{.Superior_uuid}}">{{.Superior_name}}</a></td>
+            <td><a href="/employee/?uuid={{.Superior_uuid}}">{{.Superior_name}}</a></td>
         </tr>
         {{end}}
       </table>
