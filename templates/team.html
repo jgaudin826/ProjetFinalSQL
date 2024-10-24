@@ -4,17 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style/style.css">
-    <!-- <link rel="stylesheet" href="/static/style/team.css"> -->
     <title>Team</title>
 </head>
 <body>
     
     <!-- Scripts -->
     <script src="/static/scripts/javascript.js" type="module"></script>
-    <!-- <script src="/static/scripts/team.js" type="module"></script> -->
 
-    <h1>Team {{.Name}}</h1>
-    <h3>Leader : {{.Leader}}</h3>
+    <h2>Team {{.Name}}</h2>
+
+    <table>
+        <tr>
+            <td>Leader : {{.Leader}}</td>
+            <td>
+                <section class="form">
+                    <form method="post" action="/deleteTeam">
+                    <input type="text" name="teamUuid" value="{{.Uuid}}" hidden>
+                    <input class="button" type="submit" value="Delete Team" >
+                    </form>
+                </section>
+            </td>
+        </tr>
+    </table>
     <section class="employees">
     <table>
         <tr>
@@ -29,8 +40,8 @@
             <td>{{.Department_name}}</td>
             <td>{{.Position_name}}</td>
             <td>
-                <section id="deleteEmployeeTeam" class="form">
-                    <form method="post" action="/deletePost">
+                <section class="form">
+                    <form method="post" action="/deleteEmployeeTeam">
                     <input type="text" name="employeeUuid" value="{{.Uuid}}" hidden>
                     <input type="text" name="employeeUuid" value="{{$.Uuid}}" hidden>
                     <input class="button" type="submit" value="Remove" >
@@ -40,7 +51,6 @@
         </tr>
         {{end}}
       </table>
-    
     </section>
 
 <!--Messages Pop-ups de confirmation ou erreur-->

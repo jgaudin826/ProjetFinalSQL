@@ -104,14 +104,7 @@ func DeleteDepartment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	confirm := r.FormValue("confirm")
-	if confirm != "true" {
-		fmt.Println("user did not confirm deletion") // TO-DO : Send error message need to confirm before submiting
-		http.Redirect(w, r, "/department/"+departmentUuid+"?type=error&message=Confirm+deletion+!", http.StatusSeeOther)
-		return
-	} else {
-		database.DeleteDepartment(departmentUuid, w, r)
-	}
+	database.DeleteDepartment(departmentUuid, w, r)
 
 	//Send confirmation message
 	http.Redirect(w, r, "/?type=success&message=Department+deleted+!", http.StatusSeeOther)

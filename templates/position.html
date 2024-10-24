@@ -4,17 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style/style.css">
-    <!-- <link rel="stylesheet" href="/static/style/team.css"> -->
     <title>Position</title>
 </head>
 <body>
     
     <!-- Scripts -->
     <script src="/static/scripts/javascript.js" type="module"></script>
-    <!-- <script src="/static/scripts/team.js" type="module"></script> -->
 
-    <h1>Position {{.Name}}</h1>
-    <h3>Salary : {{.Salary}}</h3>
+    <h2>Position : {{.Name}}</h2>
+    <table>
+        <tr>
+            <td>Salary : {{.Salary}}</td>
+            <td>
+                <section class="form">
+                    <form method="post" action="/deletePosition">
+                    <input type="text" name="positionUuid" value="{{.Uuid}}" hidden>
+                    <input class="button" type="submit" value="Delete Position" >
+                    </form>
+                </section>
+            </td>
+        </tr>
+    </table>
     <section class="employees">
     <table>
         <tr>

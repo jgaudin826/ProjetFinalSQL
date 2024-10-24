@@ -4,17 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style/style.css">
-    <!-- <link rel="stylesheet" href="/static/style/team.css"> -->
     <title>Departement</title>
 </head>
 <body>
     
     <!-- Scripts -->
     <script src="/static/scripts/javascript.js" type="module"></script>
-    <!-- <script src="/static/scripts/team.js" type="module"></script> -->
 
-    <h1>Department {{.Name}}</h1>
-    <h3>Leader : {{.Leader}}</h3>
+    <h2>Department {{.Name}}</h2>
+    <table>
+        <tr>
+            <td>Leader : {{.Leader}}</td>
+            <td>
+                <section class="form">
+                    <form method="post" action="/deleteDepartment">
+                    <input type="text" name="departmentUuid" value="{{.Uuid}}" hidden>
+                    <input class="button" type="submit" value="Delete Department" >
+                    </form>
+                </section>
+            </td>
+        </tr>
+    </table>
     <section class="employees">
     <table>
         <tr>
